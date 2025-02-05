@@ -38,6 +38,7 @@ func main() {
         BaseURL: "https://api.openai.com/v1",
         APIKey:  "your-api-key",
         Model:   "gpt-4o-mini",
+		StructuredOutputSupported: true,
     })
 
     var resp Response
@@ -45,6 +46,12 @@ func main() {
         "Please generate a summary of this article: Artificial Intelligence (AI) is transforming the way we live and work...",
     }, &resp)
 }
+
+// Equals to
+curl -X POST https://api.openai.com/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer your-api-key' \
+  -d '{"messages":[{"content":"You are a helpful assistant that provides structured output. Your response must be a valid JSON object.","role":"system"},{"content":"Please generate a summary of this article: Artificial Intelligence (AI) is transforming the way we live and work...","role":"user"}],"model":"gpt-4o-mini","provider":{"require_parameters":true},"response_format":{"json_schema":{"name":"response","schema":{"additionalProperties":false,"properties":{"category":{"description":"The category of the article","enum":["Technology","Science","Business","Health","Education","Other"],"type":"string"},"content":{"description":"A concise summary of the article content","type":"string"},"keywords":{"description":"Key topics mentioned in the article","items":{"type":"string"},"type":"array"},"score":{"description":"The quality score of the article (1-10)","type":"integer"},"title":{"description":"The title of the summary","type":"string"}},"required":["category","title","content","keywords","score"],"type":"object"},"strict":true},"type":"json_schema"},"temperature":0}'
 ```
 Complete example and explanation: [example/example.go](example/example.go)
 
