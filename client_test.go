@@ -145,7 +145,7 @@ func TestTypeToSchema(t *testing.T) {
 	}
 }
 
-func TestMethodCall(t *testing.T) {
+func TestDo(t *testing.T) {
 	type TestResponse struct {
 		Message string `json:"message"`
 	}
@@ -218,6 +218,374 @@ func TestMethodCall(t *testing.T) {
 
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Do() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestString(t *testing.T) {
+	tests := []struct {
+		name    string
+		mock    string
+		want    string
+		wantErr bool
+	}{
+		{
+			name:    "successful string response",
+			mock:    `{"value": "string"}`,
+			want:    "string",
+			wantErr: false,
+		},
+		{
+			name:    "error response",
+			mock:    `{"value": 123}`,
+			want:    "",
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockLLM := &mockLLM{
+				responses: [][]byte{
+					[]byte(tt.mock),
+				},
+				errors: []error{nil},
+			}
+
+			c := &client{
+				llm: mockLLM,
+			}
+
+			got, err := c.String(context.Background(), []string{})
+			if (err != nil) != tt.wantErr {
+				t.Errorf("String() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("String() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestStringSlice(t *testing.T) {
+	tests := []struct {
+		name    string
+		mock    string
+		want    []string
+		wantErr bool
+	}{
+		{
+			name:    "successful string slice response",
+			mock:    `{"values":["value1","value2"]}`,
+			want:    []string{"value1", "value2"},
+			wantErr: false,
+		},
+		{
+			name:    "error response",
+			mock:    `{"values": "abc"}`,
+			want:    nil,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockLLM := &mockLLM{
+				responses: [][]byte{
+					[]byte(tt.mock),
+				},
+				errors: []error{nil},
+			}
+
+			c := &client{
+				llm: mockLLM,
+			}
+
+			got, err := c.StringSlice(context.Background(), []string{})
+			if (err != nil) != tt.wantErr {
+				t.Errorf("StringSlice() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("StringSlice() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestBool(t *testing.T) {
+	tests := []struct {
+		name    string
+		mock    string
+		want    bool
+		wantErr bool
+	}{
+		{
+			name:    "successful bool response",
+			mock:    `{"value":true}`,
+			want:    true,
+			wantErr: false,
+		},
+		{
+			name:    "error response",
+			mock:    `{"value":"false"}`,
+			want:    false,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockLLM := &mockLLM{
+				responses: [][]byte{
+					[]byte(tt.mock),
+				},
+				errors: []error{nil},
+			}
+
+			c := &client{
+				llm: mockLLM,
+			}
+
+			got, err := c.Bool(context.Background(), []string{})
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Bool() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("Bool() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestBoolSlice(t *testing.T) {
+	tests := []struct {
+		name    string
+		mock    string
+		want    []bool
+		wantErr bool
+	}{
+		{
+			name:    "successful bool slice response",
+			mock:    `{"values":[true,false]}`,
+			want:    []bool{true, false},
+			wantErr: false,
+		},
+		{
+			name:    "error response",
+			mock:    `{"values": ["true"]}`,
+			want:    nil,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockLLM := &mockLLM{
+				responses: [][]byte{
+					[]byte(tt.mock),
+				},
+				errors: []error{nil},
+			}
+
+			c := &client{
+				llm: mockLLM,
+			}
+
+			got, err := c.BoolSlice(context.Background(), []string{})
+			if (err != nil) != tt.wantErr {
+				t.Errorf("BoolSlice() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("BoolSlice() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestInt(t *testing.T) {
+	tests := []struct {
+		name    string
+		mock    string
+		want    int
+		wantErr bool
+	}{
+		{
+			name:    "successful int response",
+			mock:    `{"value":42}`,
+			want:    42,
+			wantErr: false,
+		},
+		{
+			name:    "error response",
+			mock:    `{"value":"42"}`,
+			want:    0,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockLLM := &mockLLM{
+				responses: [][]byte{
+					[]byte(tt.mock),
+				},
+				errors: []error{nil},
+			}
+
+			c := &client{
+				llm: mockLLM,
+			}
+
+			got, err := c.Int(context.Background(), []string{})
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Int() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("Int() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestIntSlice(t *testing.T) {
+	tests := []struct {
+		name    string
+		mock    string
+		want    []int
+		wantErr bool
+	}{
+		{
+			name:    "successful int slice response",
+			mock:    `{"values":[1,2,3]}`,
+			want:    []int{1, 2, 3},
+			wantErr: false,
+		},
+		{
+			name:    "error response",
+			mock:    `{"values": ["1"]}`,
+			want:    nil,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockLLM := &mockLLM{
+				responses: [][]byte{
+					[]byte(tt.mock),
+				},
+				errors: []error{nil},
+			}
+
+			c := &client{
+				llm: mockLLM,
+			}
+
+			got, err := c.IntSlice(context.Background(), []string{})
+			if (err != nil) != tt.wantErr {
+				t.Errorf("IntSlice() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("IntSlice() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFloat(t *testing.T) {
+	tests := []struct {
+		name    string
+		mock    string
+		want    float32
+		wantErr bool
+	}{
+		{
+			name:    "successful float response",
+			mock:    `{"value":3.14}`,
+			want:    3.14,
+			wantErr: false,
+		},
+		{
+			name:    "error response",
+			mock:    `{"value":"2.12"}`,
+			want:    0,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockLLM := &mockLLM{
+				responses: [][]byte{
+					[]byte(tt.mock),
+				},
+				errors: []error{nil},
+			}
+
+			c := &client{
+				llm: mockLLM,
+			}
+
+			got, err := c.Float(context.Background(), []string{})
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Float() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("Float() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFloatSlice(t *testing.T) {
+	tests := []struct {
+		name    string
+		mock    string
+		want    []float32
+		wantErr bool
+	}{
+		{
+			name:    "successful float slice response",
+			mock:    `{"values":[1.1,2.2,3.3]}`,
+			want:    []float32{1.1, 2.2, 3.3},
+			wantErr: false,
+		},
+		{
+			name:    "error response",
+			mock:    `{"values": ["223.1"]}`,
+			want:    nil,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockLLM := &mockLLM{
+				responses: [][]byte{
+					[]byte(tt.mock),
+				},
+				errors: []error{nil},
+			}
+
+			c := &client{
+				llm: mockLLM,
+			}
+
+			got, err := c.FloatSlice(context.Background(), []string{})
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FloatSlice() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FloatSlice() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -21,39 +21,60 @@ go get github.com/glidea/llm-structed
 package main
 
 import (
-    "context"
-    "github.com/glidea/llm-structed"
+	"context"
+	"fmt"
+
+	"github.com/glidea/llm-structed"
 )
 
-type Response struct {
-    Title    string   `desc:"The title of the summary"`
-    Content  string   `desc:"A concise summary of the article content"`
-    Keywords []string `desc:"Key topics mentioned in the article"`
-    Score    int      `desc:"The quality score of the article (1-10)"`
-    Category string   `desc:"The category of the article" enum:"Technology,Science,Business,Health,Education,Other"`
+type Summary struct {
+	Title    string   `json:"title" desc:"The title of the summary"`
+	Content  string   `json:"content" desc:"A concise summary of the article content"`
+	Keywords []string `json:"keywords" desc:"Key topics mentioned in the article"`
+	Score    int      `json:"score" desc:"The quality score of the article (1-10)"`
+	Category string   `json:"category" desc:"The category of the article" enum:"Technology,Science,Business,Health,Education,Other"`
 }
 
 func main() {
-    client, err := llmstructed.New(llmstructed.Config{
-        BaseURL: "https://api.openai.com/v1",
-        APIKey:  "your-api-key",
-        Model:   "gpt-4o-mini",
+	// New client (In minimal configuration, you only need to set the APIKey)
+	cli, _ := llmstructed.New(llmstructed.Config{
+		BaseURL:                   "https://openrouter.ai/api/v1",
+		APIKey:                    "sk-...",
+		Model:                     "google/gemini-flash-1.5",
+		Temperature:               0.3,
 		StructuredOutputSupported: true,
-    })
+		Retry:                     1,
+		Debug:                     true,
+		// See source code comments of llmstructed.Config for these config detail
+	})
+	ctx := context.Background()
 
-    var resp Response
-    err = client.Do(context.Background(), []string{
-        "Please generate a summary of this article: Artificial Intelligence (AI) is transforming the way we live and work...",
-    }, &resp)
+	// Structured Outputed
+	var summary Summary
+	_ = cli.Do(ctx, []string{`Please generate a summary of this article: Artificial Intelligence (AI) is transforming the way we live and work. It refers to
+	computer systems that can perform tasks that normally require human intelligence. These
+	tasks include visual perception, speech recognition, decision-making, and language
+	translation. Machine learning, a subset of AI, enables systems to learn and improve
+	from experience without being explicitly programmed. Deep learning, particularly,
+	has revolutionized AI by using neural networks to process complex patterns in data.`,
+	}, &summary)
+	fmt.Printf("Go Struct: %v\n\n", summary)
+
+	// Simple method for single value
+	str, _ := cli.String(ctx, []string{"Hello, who are you?"})
+	fmt.Printf("String: %s\n\n", str)
+	languages, _ := cli.StringSlice(ctx, []string{"List some popular programming languages."})
+	fmt.Printf("String Slice: %v\n\n", languages)
+	count, _ := cli.Int(ctx, []string{`How many words are in this sentence: "Hello world, this is a test."`})
+	fmt.Printf("Integer: %d\n\n", count)
+	yes, _ := cli.Bool(ctx, []string{"Are you happy?"})
+	fmt.Printf("Boolean: %v\n\n", yes)
+	trues, _ := cli.BoolSlice(ctx, []string{"Are these statements true? [\"The sky is blue\", \"Fish can fly\", \"Water is wet\"]"})
+	fmt.Printf("Boolean Slice: %v\n\n", trues)
+	pi, _ := cli.Float(ctx, []string{"What is the value of pi (to two decimal places)?"})
+	fmt.Printf("Float: %.2f\n\n", pi)
 }
-
-// Equals to
-curl -X POST https://api.openai.com/v1/chat/completions \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer your-api-key' \
-  -d '{"messages":[{"content":"You are a helpful assistant that provides structured output. Your response must be a valid JSON object.","role":"system"},{"content":"Please generate a summary of this article: Artificial Intelligence (AI) is transforming the way we live and work...","role":"user"}],"model":"gpt-4o-mini","provider":{"require_parameters":true},"response_format":{"json_schema":{"name":"response","schema":{"additionalProperties":false,"properties":{"category":{"description":"The category of the article","enum":["Technology","Science","Business","Health","Education","Other"],"type":"string"},"content":{"description":"A concise summary of the article content","type":"string"},"keywords":{"description":"Key topics mentioned in the article","items":{"type":"string"},"type":"array"},"score":{"description":"The quality score of the article (1-10)","type":"integer"},"title":{"description":"The title of the summary","type":"string"}},"required":["category","title","content","keywords","score"],"type":"object"},"strict":true},"type":"json_schema"},"temperature":0}'
 ```
-Complete example and explanation: [example/example.go](example/example.go)
 
 ## Differences from [go-openapi](https://github.com/sashabaranov/go-openai)
 

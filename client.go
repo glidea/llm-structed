@@ -13,7 +13,16 @@ import (
 
 type Client interface {
 	Do(ctx context.Context, messages []string, ret any) error
-	DoUnstructured(ctx context.Context, messages []string) (string, error)
+
+	// Simple method for single value
+	String(ctx context.Context, messages []string) (string, error)
+	StringSlice(ctx context.Context, messages []string) ([]string, error)
+	Bool(ctx context.Context, messages []string) (bool, error)
+	BoolSlice(ctx context.Context, messages []string) ([]bool, error)
+	Int(ctx context.Context, messages []string) (int, error)
+	IntSlice(ctx context.Context, messages []string) ([]int, error)
+	Float(ctx context.Context, messages []string) (float32, error)
+	FloatSlice(ctx context.Context, messages []string) ([]float32, error)
 }
 
 // Config contains the configuration options for the LLM client.
@@ -197,14 +206,98 @@ func (c *client) Do(ctx context.Context, messages []string, ret any) error {
 	return lastErr
 }
 
-type unstructured struct {
-	Content string
+type stringResponse struct {
+	Value string
 }
 
-func (c *client) DoUnstructured(ctx context.Context, messages []string) (string, error) {
-	var resp unstructured
+func (c *client) String(ctx context.Context, messages []string) (string, error) {
+	var resp stringResponse
 	if err := c.Do(ctx, messages, &resp); err != nil {
 		return "", err
 	}
-	return resp.Content, nil
+	return resp.Value, nil
+}
+
+type stringSliceResponse struct {
+	Values []string
+}
+
+func (c *client) StringSlice(ctx context.Context, messages []string) ([]string, error) {
+	var resp stringSliceResponse
+	if err := c.Do(ctx, messages, &resp); err != nil {
+		return nil, err
+	}
+	return resp.Values, nil
+}
+
+type boolResponse struct {
+	Value bool
+}
+
+func (c *client) Bool(ctx context.Context, messages []string) (bool, error) {
+	var resp boolResponse
+	if err := c.Do(ctx, messages, &resp); err != nil {
+		return false, err
+	}
+	return resp.Value, nil
+}
+
+type boolSliceResponse struct {
+	Values []bool
+}
+
+func (c *client) BoolSlice(ctx context.Context, messages []string) ([]bool, error) {
+	var resp boolSliceResponse
+	if err := c.Do(ctx, messages, &resp); err != nil {
+		return nil, err
+	}
+	return resp.Values, nil
+}
+
+type intResponse struct {
+	Value int
+}
+
+func (c *client) Int(ctx context.Context, messages []string) (int, error) {
+	var resp intResponse
+	if err := c.Do(ctx, messages, &resp); err != nil {
+		return 0, err
+	}
+	return resp.Value, nil
+}
+
+type intSliceResponse struct {
+	Values []int
+}
+
+func (c *client) IntSlice(ctx context.Context, messages []string) ([]int, error) {
+	var resp intSliceResponse
+	if err := c.Do(ctx, messages, &resp); err != nil {
+		return nil, err
+	}
+	return resp.Values, nil
+}
+
+type floatResponse struct {
+	Value float32
+}
+
+func (c *client) Float(ctx context.Context, messages []string) (float32, error) {
+	var resp floatResponse
+	if err := c.Do(ctx, messages, &resp); err != nil {
+		return 0, err
+	}
+	return resp.Value, nil
+}
+
+type floatSliceResponse struct {
+	Values []float32
+}
+
+func (c *client) FloatSlice(ctx context.Context, messages []string) ([]float32, error) {
+	var resp floatSliceResponse
+	if err := c.Do(ctx, messages, &resp); err != nil {
+		return nil, err
+	}
+	return resp.Values, nil
 }
