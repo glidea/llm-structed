@@ -13,6 +13,7 @@ import (
 
 type Client interface {
 	Do(ctx context.Context, messages []string, ret any) error
+	DoUnstructured(ctx context.Context, messages []string) (string, error)
 }
 
 // Config contains the configuration options for the LLM client.
@@ -194,4 +195,16 @@ func (c *client) Do(ctx context.Context, messages []string, ret any) error {
 	}
 
 	return lastErr
+}
+
+type unstructured struct {
+	Content string
+}
+
+func (c *client) DoUnstructured(ctx context.Context, messages []string) (string, error) {
+	var resp unstructured
+	if err := c.Do(ctx, messages, &resp); err != nil {
+		return "", err
+	}
+	return resp.Content, nil
 }

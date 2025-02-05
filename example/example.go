@@ -50,4 +50,10 @@ func main() {
 	fmt.Println("Keywords: ", summary.Keywords)
 	fmt.Println("Score: ", summary.Score)
 	fmt.Println("Category: ", summary.Category)
+
+	// Unstructured output (like other general clients)
+	content, _ := client.DoUnstructured(context.Background(), []string{
+		"Hello, who are you?",
+	})
+	fmt.Println("Content: ", content)
 }
