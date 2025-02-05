@@ -1,21 +1,21 @@
-[中文](README-zh.md)
+
 
 # llm-structed
 
-llm-structed is an LLM Client optimized for structured output scenarios:
-* Automatically converts Go struct definitions into Response JSON Schema
-* Automatically transforms LLM output into Go structs
-* Friendly declarative configuration based on struct tags
-* Lightweight
-* Based on [Json Schema or Json Object](https://platform.openai.com/docs/guides/structured-outputs#supported-schemas)
+llm-structed 是一个针对结构化输出场景优化的 LLM Client：
+* 自动将 Go 结构体定义转换为 Response JSON Schema
+* 自动把 LLM 的输出转换为 Go 结构体
+* 基于 struct tags 的友好声明式配置
+* 轻量
+* 基于 [Json Schema or Json Object](https://platform.openai.com/docs/guides/structured-outputs#supported-schemas)
 
-## Installation
+## 安装
 
 ```bash
 go get github.com/glidea/llm-structed
 ```
 
-## Quick Start
+## 快速开始
 ```go
 package main
 
@@ -45,13 +45,13 @@ func main() {
     }, &resp)
 }
 ```
-Complete example and explanation: [example/example.go](example/example.go)
+完整示例与说明：[example/example.go](example/example.go)
 
-## Differences from [go-openapi](https://github.com/sashabaranov/go-openai)
+## 与 [go-openapi](https://github.com/sashabaranov/go-openai) 的区别
 
-* More lightweight
-* Focused on structured scenarios, does not support additional features
-* Simple and intuitive calling method. For comparison, here is a structured output example from go-openapi
+* 更轻量
+* 专注与结构化场景，不支持额外功能
+* 调用方式简单直观。作为对比以下是 go-openapi 的结构化输出示例
 ```go
 package main
 
@@ -112,13 +112,13 @@ func main() {
 }
 ```
 
-## Best Practices
+## 最佳实践
 
-* Use the `desc` tag to describe field meanings
-* Use the `enum` tag to describe field options
+* 使用 `desc` 标签来描述字段含义
+* 使用 `enum` 标签来描述字段可选值
 
-These tags are automatically injected into the generated JSON Schema to enrich the context
+这些标签会自动注入到生成的 JSON Schema 中，以丰富上下文
 
-## License
+## 许可证
 
 MIT License
