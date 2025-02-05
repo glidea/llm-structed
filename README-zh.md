@@ -8,6 +8,7 @@ llm-structed 是一个针对结构化输出场景优化的 LLM Client：
 * 基于 struct tags 的友好声明式配置
 * 轻量
 * 基于 [Json Schema or Json Object](https://platform.openai.com/docs/guides/structured-outputs#supported-schemas)
+* 只支持 OpenAI 兼容的 LLM，主流提供商基本都有对应的兼容接口，比如 [Gemini](https://ai.google.dev/gemini-api/docs/openai)
 
 ## 安装
 
