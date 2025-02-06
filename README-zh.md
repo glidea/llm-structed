@@ -1,4 +1,22 @@
+# 背景
+在 chat 场景中，通常模型不需要返回结构化的数据。但在 LLM 应用开发里，模型通常被视为提供某种原子能力的 API Service ，此时我们希望直接得到一个 JSON ，通常的解法有：
 
+## 1. 直接在 Prompt 里强调输出格式
+* 优：简单，对模型 API 没有任何额外要求
+* 缺：格式不稳定，特别是对于能力较差的模型
+
+## 2. 使用 response_format: { type: "json_object" } + Prompt 说明具体字段
+* 优：总是确保返回合法 JSON
+* 缺：字段不稳定，特别是对于能力较差的模型
+
+## 3. 使用 response_format: { type: "json_schema", json_schema: {"strict": true, "schema": ...} }
+* 优：确保返回合法 JSON ，且字段稳定
+* 缺：仅部分模型支持
+
+## SDK
+* 在 OpenAI 提供的 [SDK]( https://platform.openai.com/docs/guides/structured-outputs?example=structured-data#how-to-use) 中直接支持 Class 作为 Response Format ，但仅支持 Python
+* 在 [go-openai]( https://github.com/sashabaranov/go-openai) 中，使用方式过于通用繁琐
+* llm-structed 专门针对结构化场景优化，对方案 3 和方案 2 提供原生支持
 
 # llm-structed
 

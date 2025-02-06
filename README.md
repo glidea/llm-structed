@@ -1,5 +1,25 @@
 [中文](README-zh.md)
 
+# Background
+In chat scenarios, models typically do not need to return structured data. However, in LLM application development, models are often viewed as API services that provide some atomic capabilities, and at this point, we want to receive a JSON directly. The common solutions are:
+
+## 1. Emphasizing the output format directly in the Prompt
+* Pros: Simple, no additional requirements for the model API
+* Cons: Format is unstable, especially for less capable models
+
+## 2. Using response_format: { type: "json_object" } + Prompt to specify the exact fields
+* Pros: Always ensures a valid JSON is returned
+* Cons: Fields are unstable, especially for less capable models
+
+## 3. Using response_format: { type: "json_schema", json_schema: {"strict": true, "schema": ...} }
+* Pros: Ensures a valid JSON is returned, and fields are stable
+* Cons: Only supported by some models
+
+## SDK
+* The [SDK]( https://platform.openai.com/docs/guides/structured-outputs?example=structured-data#how-to-use) provided by OpenAI directly supports Class as a Response Format, but only for Python
+* In [go-openai]( https://github.com/sashabaranov/go-openai), the usage is overly generic and cumbersome
+* llm-structed is specifically optimized for structured scenarios, providing native support for solutions 3 and 2
+
 # llm-structed
 
 llm-structed is an LLM Client optimized for structured output scenarios:
