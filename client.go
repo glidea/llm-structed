@@ -52,7 +52,7 @@ type Config struct {
 	StructuredOutputSupported bool
 	// Retry specifies how many times to retry failed requests.
 	// When StructuredOutputSupported=false, it's recommended to enable retry.
-	// Default: 1
+	// Default: 0
 	Retry int
 }
 

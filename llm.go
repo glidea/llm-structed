@@ -89,9 +89,13 @@ func (o *openai) Completions(ctx context.Context, messages []string, responseSch
 		reqBody["response_format"] = map[string]interface{}{
 			"type": "json_object",
 		}
+		jsonSchema, err := json.Marshal(convertToOpenAISchema(responseSchema))
+		if err != nil {
+			return nil, errors.Wrap(err, "marshal response schema")
+		}
 		reqBody["messages"] = append(chatMessages, map[string]string{
 			"role":    "user",
-			"content": fmt.Sprintf("You must format your response as a JSON object following this schema: \n%v\nDo not include any other text in your response.", convertToOpenAISchema(responseSchema)),
+			"content": fmt.Sprintf("You must format your response as a JSON object following this schema: \n%s\nDo not include any other text in your response.", jsonSchema),
 		})
 	}
 	reqBodyBytes, err := json.Marshal(reqBody)
